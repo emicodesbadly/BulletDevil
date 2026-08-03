@@ -23,7 +23,6 @@ public sealed class Screen : IDisposable
     private readonly int FBO;
     private readonly int renderTexture;
 
-
     private readonly int VBO, VAO, EBO;
 
     private readonly Window window;

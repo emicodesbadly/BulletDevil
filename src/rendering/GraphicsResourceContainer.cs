@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using BulletDevil.Utilities;
 
+namespace BulletDevil.Rendering;
+
 public class GraphicsResourceContainer<T> : IDisposable where T : class, IDisposable
 {
     private Dictionary<string, T> resourceDictionary = [];
