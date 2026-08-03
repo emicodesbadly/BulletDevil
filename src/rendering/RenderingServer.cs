@@ -20,14 +20,6 @@ public sealed class RenderingServer : IDisposable
     public GraphicsResourceContainer<Shader> shaders;
     public GraphicsResourceContainer<Texture> textures;
 
-    private Screen screen;
-    public Screen Screen => screen;
-
-    public void CreateScreen(Window window, (int width, int height) targetResolution)
-    {
-        screen = new Screen(window, targetResolution);
-    }
-
     #region IDisposable Implementation
 
     private bool disposed = false;
@@ -41,8 +33,11 @@ public sealed class RenderingServer : IDisposable
             shaders = null;
 
             // Dispose of textures
-            //textures.Dispose();
-            //textures = null;
+            textures.Dispose();
+            textures = null;
+
+            // Dispose of screen
+            //screen.Dispose();
 
             disposed = true;
         }

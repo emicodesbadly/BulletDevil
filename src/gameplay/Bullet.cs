@@ -129,7 +129,23 @@ public class Bullet : Sprite
     {
         if (!disposed)
         {
+            // Destroy all instances
+            for (int i = instances.Count - 1; i >= 0; i--)
+            {
+                //instances[i].Destroy();
+            }
 
+            instances = null;
+            
+            // Unbind & delete VBO, instance VBO & EBO
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.DeleteBuffers(3, [VBO, instVBO, EBO]);
+
+            // Unbind & delete vertex array
+            GL.BindVertexArray(0);
+            GL.DeleteVertexArray(VAO);
+
+            disposed = true;
         }
     }
 

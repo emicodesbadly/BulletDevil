@@ -63,10 +63,33 @@ public sealed class Texture : IDisposable
         // GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
     }
 
-    // Takes 2 arguments: name, file extension
+    private Texture(string name, int handle)
+    {
+        this.name   = name;
+        this.handle = handle;
+    }
+
+    // Use to create texture from image
     public static Texture Create(string name, string fileExtension)
     {
         Lazy<Texture> lazyTexture = new(() => new Texture(name, fileExtension));
+
+        if (RenderingServer.Instance.textures.TryAdd(name, lazyTexture))
+        {
+            return lazyTexture.Value;
+        }
+        else
+        {
+            Utils.ThrowWarning("ProjectileTK.Rendering.Texture", $"Texture \'{name}\' could not be created!");
+
+            return null;
+        }
+    }
+
+    // Use to create texture from existing GPU resource 
+    public static Texture Create(string name, int handle)
+    {
+        Lazy<Texture> lazyTexture = new(() => new Texture(name, handle));
 
         if (RenderingServer.Instance.textures.TryAdd(name, lazyTexture))
         {

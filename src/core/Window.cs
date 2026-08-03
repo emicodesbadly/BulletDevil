@@ -36,10 +36,19 @@ public sealed class Window : GameWindow
         test = Bullet.Create("sprite-default", "missing", Vector2.One);
 
         // CREATE SCREEN
-        RenderingServer.Instance.CreateScreen(this, (1920, 1080));
+        //RenderingServer.Instance.CreateScreen(this, (1920, 1080), 5f);
 
         // DEBUG BULLETS
         test.Instantiate(Vector2.Zero, 0f, Vector2.One);
+    }
+
+    protected override void OnUnload()
+    {
+        base.OnUnload();
+
+        RenderingServer.Instance.Dispose();
+
+        test.Dispose();
     }
 
     // Called when the window is resized
@@ -49,7 +58,7 @@ public sealed class Window : GameWindow
 
         GL.Viewport(0, 0, e.Width, e.Height);
 
-        RenderingServer.Instance.Screen.OnWindowResized((e.Width, e.Height));
+        //RenderingServer.Instance.Screen.OnWindowResized((e.Width, e.Height));
     }
 
     // Called when the frame is rendered, AFTER OnUpdateFrame()
@@ -58,12 +67,12 @@ public sealed class Window : GameWindow
         base.OnRenderFrame(e);
 
         // Bind screen FBO
-        RenderingServer.Instance.Screen.BindFBO();
+        //RenderingServer.Instance.Screen.BindFBO();
 
         test.Render();
 
         // Render the screen
-		RenderingServer.Instance.Screen.Render();
+		//RenderingServer.Instance.Screen.Render();
 
         SwapBuffers();
     }
