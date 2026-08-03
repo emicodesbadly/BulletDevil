@@ -1,2 +1,25 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using BulletDevil.Core;
+using OpenTK.Windowing.Desktop;
+
+namespace BulletDevil;
+
+sealed class Program
+{
+    static void Main()
+    {
+        GameWindowSettings gameWindowSettings = new()
+        {
+            UpdateFrequency = 60d
+        };
+
+        NativeWindowSettings nativeWindowSettings = new()
+        {
+            Title = "title",
+            ClientSize = (640, 360),
+            APIVersion = new(4, 6)
+        };
+
+        using Window window = new(gameWindowSettings, nativeWindowSettings);
+        window.Run();
+    }
+}
