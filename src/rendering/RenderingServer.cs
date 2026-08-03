@@ -23,9 +23,17 @@ public sealed class RenderingServer : IDisposable
     private Screen screen;
     public Screen Screen => screen;
 
-    public void CreateScreen(Window window, (int width, int height) targetResolution)
+    private Background background;
+    public Background Background => background;
+
+    public void CreateScreen(Window window, (int width, int height) targetResolution, float size = 1f)
     {
-        screen = new Screen(window, targetResolution);
+        screen = new Screen(window, targetResolution, size);
+    }
+
+    public void CreateBackground(Window window, string shader, string texture)
+    {
+        background = new(window, shader, texture);
     }
 
     #region IDisposable Implementation
@@ -36,13 +44,21 @@ public sealed class RenderingServer : IDisposable
     {
         if (!disposed)
         {
+            // Dispose of screen
+            screen.Dispose();
+            screen = null;
+
+            // Dispose of background
+            background.Dispose();
+            background = null;
+
             // Dispose of shaders
             shaders.Dispose();
             shaders = null;
 
             // Dispose of textures
-            //textures.Dispose();
-            //textures = null;
+            textures.Dispose();
+            textures = null;
 
             disposed = true;
         }

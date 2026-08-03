@@ -15,8 +15,6 @@ public sealed class Window : GameWindow
 
     }
 
-    Bullet test;
-
     // Runs immediately after Run() is called
     protected override void OnLoad()
     {
@@ -31,15 +29,22 @@ public sealed class Window : GameWindow
         Texture.Create("missing-red", ".png");
         Texture.Create("missing-green", ".png");
         Texture.Create("missing-blue", ".png");
+        Texture.Create("missing-background-16x9", ".png");
 
         // LOAD BULLETS
-        test = Bullet.Create("sprite-default", "missing", Vector2.One);
+
+        // CREATE BACKGROUND
+        RenderingServer.Instance.CreateBackground(this, "screen", "missing-background-16x9");
 
         // CREATE SCREEN
-        RenderingServer.Instance.CreateScreen(this, (1920, 1080));
+        RenderingServer.Instance.CreateScreen(this, (810, 1080), 5f);
+    }
 
-        // DEBUG BULLETS
-        test.Instantiate(Vector2.Zero, 0f, Vector2.One);
+    protected override void OnUnload()
+    {
+        base.OnUnload();
+
+        RenderingServer.Instance.Dispose();
     }
 
     // Called when the window is resized
@@ -49,7 +54,9 @@ public sealed class Window : GameWindow
 
         GL.Viewport(0, 0, e.Width, e.Height);
 
-        RenderingServer.Instance.Screen.OnWindowResized((e.Width, e.Height));
+        RenderingServer.Instance.Background.OnWindowResized((e.Width, e.Height));
+
+        RenderingServer.Instance.Screen.OnWindowResized(RenderingServer.Instance.Background.Resolution);
     }
 
     // Called when the frame is rendered, AFTER OnUpdateFrame()
@@ -60,10 +67,14 @@ public sealed class Window : GameWindow
         // Bind screen FBO
         RenderingServer.Instance.Screen.BindFBO();
 
-        test.Render();
+        /* Render game here */
+
+        // Render the background
+        RenderingServer.Instance.Background.Render();
 
         // Render the screen
 		RenderingServer.Instance.Screen.Render();
+
 
         SwapBuffers();
     }

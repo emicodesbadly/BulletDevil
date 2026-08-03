@@ -111,48 +111,54 @@ public sealed class Screen : IDisposable
     {
         float windowAspect = (float)windowResolution.width / (float)windowResolution.height;
 
+        float left   = RenderingServer.Instance.Background.BottomLeft.X;
+        float right  = RenderingServer.Instance.Background.TopRight.X;
+
+        float top    = RenderingServer.Instance.Background.TopRight.Y;
+        float bottom = RenderingServer.Instance.Background.BottomLeft.Y;
+
         if (windowAspect > AspectRatio)
         {
-            vertices[0]  =  (1 / windowAspect) * AspectRatio;
-            vertices[1]  =  1.0f;
+            vertices[0]  =  (right / windowAspect) * AspectRatio;
+            vertices[1]  =  top;
 
-            vertices[4]  =  (1 / windowAspect) * AspectRatio;
-            vertices[5]  = -1.0f;
+            vertices[4]  =  (right / windowAspect) * AspectRatio;
+            vertices[5]  =  bottom;
 
-            vertices[8]  = -(1 / windowAspect) * AspectRatio;
-            vertices[9]  = -1.0f;
+            vertices[8]  = (left / windowAspect) * AspectRatio;
+            vertices[9]  = bottom;
 
-            vertices[12] = -(1 / windowAspect) * AspectRatio;
-            vertices[13] =  1.0f;
+            vertices[12] = (left / windowAspect) * AspectRatio;
+            vertices[13] =  top;
 
         }
         else if (windowAspect < AspectRatio)
         {
-            vertices[0]  =  1.0f; 
-            vertices[1]  =  1 / AspectRatio * windowAspect;
+            vertices[0]  =  right; 
+            vertices[1]  =  top / AspectRatio * windowAspect;
 
-            vertices[4]  =  1.0f;
-            vertices[5]  = -1 / AspectRatio * windowAspect;
+            vertices[4]  =  right;
+            vertices[5]  = bottom / AspectRatio * windowAspect;
 
-            vertices[8]  = -1.0f;
-            vertices[9]  = -1 / AspectRatio * windowAspect;
+            vertices[8]  = left;
+            vertices[9]  = bottom / AspectRatio * windowAspect;
 
-            vertices[12] = -1.0f;
-            vertices[13] =  1 / AspectRatio * windowAspect;
+            vertices[12] = left;
+            vertices[13] =  top / AspectRatio * windowAspect;
         }
         else
         {
-            vertices[0]  =  1.0f; 
-            vertices[1]  =  1.0f;
+            vertices[0]  =  right; 
+            vertices[1]  =  top;
 
-            vertices[4]  =  1.0f;
-            vertices[5]  = -1.0f;
+            vertices[4]  =  right;
+            vertices[5]  = bottom;
 
-            vertices[8]  = -1.0f;
-            vertices[9]  = -1.0f;
+            vertices[8]  = left;
+            vertices[9]  = bottom;
 
-            vertices[12] = -1.0f;
-            vertices[13] =  1.0f;
+            vertices[12] = left;
+            vertices[13] =  top;
         }
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
@@ -206,8 +212,8 @@ public sealed class Screen : IDisposable
         // Change viewport to match
         GL.Viewport(0, 0, window.ClientSize.X, window.ClientSize.Y);
 
-        GL.ClearColor(Color4.Black);
-        GL.Clear(ClearBufferMask.ColorBufferBit);
+        //GL.ClearColor(Color4.Black);
+        //GL.Clear(ClearBufferMask.ColorBufferBit);
 
         // Bind VAO
         GL.BindVertexArray(VAO);
@@ -234,7 +240,7 @@ public sealed class Screen : IDisposable
     {
         if (!disposed)
         {
-            // Unbind & delete VBO, instance VBO & EBO
+            // Unbind & delete VBO VBO & EBO
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.DeleteBuffers(2, [VBO, EBO]);
 

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
 using StbImageSharp;
 using BulletDevil.Utilities;
@@ -11,6 +12,8 @@ public sealed class Texture : IDisposable
     private readonly int handle;
 
     public readonly string name;
+
+    public readonly Vector2i size;
 
     private Texture(string name, string fileExtension)
     {
@@ -34,6 +37,8 @@ public sealed class Texture : IDisposable
         using (Stream stream = File.OpenRead(path))
         {
             ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+
+            size = (image.Width, image.Height);
 
             // Now that our pixels are prepared, it's time to generate a texture. We do this with GL.TexImage2D.
             // Arguments:
