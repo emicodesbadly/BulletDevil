@@ -1,8 +1,8 @@
 using System;
 using System.IO;
-using BulletDevil.Utilities;
 using OpenTK.Graphics.OpenGL4;
 using StbImageSharp;
+using BulletDevil.Utilities;
 
 namespace BulletDevil.Rendering;
 
