@@ -128,7 +128,7 @@ public sealed class Transform
         transformation *= Matrix4.CreateTranslation(Position.X, Position.Y, 0.0f);
 
         // Lastly we apply the world-to-screen matrix
-        //transformation *= RenderingServer.Instance.Screen.WorldToScreenMatrix;
+        transformation *= RenderingServer.Instance.Screen.WorldToScreenMatrix;
 
         return transformation;
     }
