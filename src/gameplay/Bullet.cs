@@ -9,9 +9,10 @@ public class Bullet : Sprite
 {
     protected readonly int instVBO;
 
-    private List<Bullet> instances = [];
+    private List<BulletInstance> instances = [];
 
-    private Bullet()
+    private Bullet(string shader, string texture, Vector2 size)
+        : base(shader, texture, size)
     {
         // Also create & bind instance vertex buffer
         instVBO = GL.GenBuffer();
@@ -45,10 +46,28 @@ public class Bullet : Sprite
         GL.BindVertexArray(0);
     }
 
+    public static Bullet Create(string shader, string texture, Vector2 size)
+    {
+        return new Bullet(shader, texture, size);
+    }
+
+    public BulletInstance Instantiate(Vector2 position, float rotation, Vector2 scale)
+    {
+        BulletInstance instance = new();
+
+        instance.transform.Position = position;
+        instance.transform.Rotation = rotation;
+        instance.transform.Scale    = scale;
+
+        instances.Add(instance);
+
+        return instance;
+    }
+
     public override void Render()
     {
         // If this sprite has not been instantiated, skip
-        if (instances.Count <= 0)
+        if (instances == null || instances.Count <= 0)
         {
             return;
         }

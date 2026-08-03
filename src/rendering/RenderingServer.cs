@@ -1,4 +1,5 @@
 using System;
+using BulletDevil.Core;
 using BulletDevil.Utilities;
 
 namespace BulletDevil.Rendering;
@@ -18,6 +19,14 @@ public sealed class RenderingServer : IDisposable
     // Graphics resources
     public GraphicsResourceContainer<Shader> shaders;
     public GraphicsResourceContainer<Texture> textures;
+
+    private Screen screen;
+    public Screen Screen => screen;
+
+    public void CreateScreen(Window window, (int width, int height) targetResolution)
+    {
+        screen = new Screen(window, targetResolution);
+    }
 
     #region IDisposable Implementation
 

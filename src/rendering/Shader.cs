@@ -84,6 +84,8 @@ public sealed class Shader : IDisposable
     {
         Lazy<Shader> lazyShader = new(() => new Shader(name));
 
+        RenderingServer.Instance.shaders.TryAdd(name, lazyShader);
+
         return lazyShader.Value;
     }
 

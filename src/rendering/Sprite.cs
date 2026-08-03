@@ -1,5 +1,6 @@
 using System;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using BulletDevil.Core;
 using BulletDevil.Utilities;
 
@@ -7,12 +8,10 @@ namespace BulletDevil.Rendering;
 
 public abstract class Sprite : IDisposable
 {
-    public readonly Transform transform = new();
-
     protected readonly float[] vertices = [
     //	 X       Y      UV(X) UV(Y)
-            0.25f,  0.25f, 1.0f, 1.0f,
-            0.25f, -0.25f, 1.0f, 0.0f,
+         0.25f,  0.25f, 1.0f, 1.0f,
+         0.25f, -0.25f, 1.0f, 0.0f,
         -0.25f, -0.25f, 0.0f, 0.0f,
         -0.25f,  0.25f, 0.0f, 1.0f
     ];
@@ -27,8 +26,31 @@ public abstract class Sprite : IDisposable
     protected Shader shader;
     protected Texture texture;
 
-    protected Sprite()
+    protected Sprite(string shader, string texture, Vector2 size)
     {
+        if (!RenderingServer.Instance.shaders.TryGet(shader, out this.shader))
+        {
+            Utils.ThrowWarning(this, $"No shader with name \'{shader}\' exists!");
+        }
+
+        if (!RenderingServer.Instance.textures.TryGet(texture, out this.texture))
+        {
+            Utils.ThrowWarning(this, $"No texture with name \'{texture}\' exists!");
+        }
+
+        // Set vertex positions according to size
+        vertices[0]  =  size.X * 0.5f;
+        vertices[1]  =  size.Y * 0.5f;
+
+        vertices[4]  =  size.X * 0.5f;
+        vertices[5]  = -size.Y * 0.5f;
+
+        vertices[8]  = -size.X * 0.5f;
+        vertices[9]  = -size.Y * 0.5f;
+
+        vertices[12] = -size.X * 0.5f;
+        vertices[13] =  size.Y * 0.5f;
+
         // Create & bind vertex buffer, & upload data to it
         VBO = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
