@@ -12,9 +12,13 @@ public class Bullet : Sprite
 {
     protected readonly int instVBO;
 
+    public readonly Collider collider;
+
     private List<BulletInstance> instances = [];
 
-    private Bullet(string shader, string texture, Vector2 size)
+    #region Bullet Creation
+
+    private Bullet(string shader, string texture, Vector2 size, float colliderRadius)
         : base(shader, texture, size)
     {
         // Also create & bind instance vertex buffer
@@ -47,11 +51,52 @@ public class Bullet : Sprite
         // Unbind buffers
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         GL.BindVertexArray(0);
+
+        // Create collider
+        collider = Collider.CreateCircleCollider(colliderRadius);
     }
 
-    public static Bullet Create(string name, string shader, string texture, Vector2 size)
+    private Bullet(string shader, string texture, Vector2 size, Vector2 colliderSize)
+        : base(shader, texture, size)
     {
-        Lazy<Bullet> lazyBullet = new Lazy<Bullet>(() => new Bullet(shader, texture, size));
+        // Also create & bind instance vertex buffer
+        instVBO = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, instVBO);
+
+        // Set up the transform vertex attribute
+        // It is a mat4, so it takes 4 locations
+
+        // Column 0
+        GL.VertexAttribPointer(2, 4, VertexAttribPointerType.Float, false, 16 * sizeof(float), 0);
+        GL.EnableVertexAttribArray(2);
+        GL.VertexAttribDivisor(2, 1);
+
+        // Column 1
+        GL.VertexAttribPointer(3, 4, VertexAttribPointerType.Float, false, 16 * sizeof(float), 4 * sizeof(float));
+        GL.EnableVertexAttribArray(3);
+        GL.VertexAttribDivisor(3, 1);
+
+        // Column 2
+        GL.VertexAttribPointer(4, 4, VertexAttribPointerType.Float, false, 16 * sizeof(float), 8 * sizeof(float));
+        GL.EnableVertexAttribArray(4);
+        GL.VertexAttribDivisor(4, 1);
+
+        // Column 3
+        GL.VertexAttribPointer(5, 4, VertexAttribPointerType.Float, false, 16 * sizeof(float), 12 * sizeof(float));
+        GL.EnableVertexAttribArray(5);
+        GL.VertexAttribDivisor(5, 1);
+
+        // Unbind buffers
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.BindVertexArray(0);
+
+        // Create collider
+        collider = Collider.CreateBoxCollider(colliderSize);
+    }
+
+    public static Bullet Create(string name, string shader, string texture, Vector2 size, float colliderRadius)
+    {
+        Lazy<Bullet> lazyBullet = new Lazy<Bullet>(() => new Bullet(shader, texture, size, colliderRadius));
 
         if (!RenderingServer.Instance.bullets.TryAdd(name, lazyBullet))
         {
@@ -62,6 +107,22 @@ public class Bullet : Sprite
 
         return lazyBullet.Value;
     }
+
+    public static Bullet Create(string name, string shader, string texture, Vector2 size, Vector2 colliderSize)
+    {
+        Lazy<Bullet> lazyBullet = new Lazy<Bullet>(() => new Bullet(shader, texture, size, colliderSize));
+
+        if (!RenderingServer.Instance.bullets.TryAdd(name, lazyBullet))
+        {
+            Utils.ThrowWarning("ProjectileTK.Gameplay.Bullet", $"Bullet \'{name}\' could not be created!");
+
+            return null;
+        }
+
+        return lazyBullet.Value;
+    }
+
+    #endregion
 
     public void Fire(TransformData transformData, BulletBehavior behavior, float angle)
     {

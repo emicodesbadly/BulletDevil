@@ -37,7 +37,7 @@ public sealed class Window : GameWindow
         Texture.Create("missing-background-16x9", ".png");
 
         // LOAD BULLETS
-        Bullet.Create("test-bullet", "sprite-default", "missing", Vector2.One);
+        Bullet.Create("test-bullet", "sprite-default", "missing", Vector2.One, Vector2.One);
 
         // CREATE BACKGROUND
         RenderingServer.Instance.CreateBackground(this, "screen", "missing-background-16x9");
