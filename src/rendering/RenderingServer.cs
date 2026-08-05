@@ -15,6 +15,7 @@ public sealed class RenderingServer : IDisposable
     {
         shaders  = new();
         textures = new();
+        bullets  = new();
     }
 
     // Graphics resources
@@ -36,6 +37,14 @@ public sealed class RenderingServer : IDisposable
     public void CreateBackground(Window window, string shader, string texture)
     {
         background = new(window, shader, texture);
+    }
+
+    public void RenderBullets()
+    {
+        foreach (Bullet bullet in bullets.Values)
+        {
+            bullet.Render();
+        }
     }
 
     #region IDisposable Implementation

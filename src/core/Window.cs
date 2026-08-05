@@ -15,6 +15,8 @@ public sealed class Window : GameWindow
 
     }
 
+    Transform transform = new(Vector2.Zero, 0f, Vector2.One);
+
     // Runs immediately after Run() is called
     protected override void OnLoad()
     {
@@ -35,12 +37,25 @@ public sealed class Window : GameWindow
         Texture.Create("missing-background-16x9", ".png");
 
         // LOAD BULLETS
+        Bullet.Create("test-bullet", "sprite-default", "missing", Vector2.One);
 
         // CREATE BACKGROUND
         RenderingServer.Instance.CreateBackground(this, "screen", "missing-background-16x9");
 
         // CREATE SCREEN
         RenderingServer.Instance.CreateScreen(this, (810, 1080), 5f);
+
+        // DEBUG BULLETS
+        BulletBehavior testBehavior = new(BulletBehaviorType.AcceleratedRadial, 5f, [5f, 2f, 180f]);
+
+        RenderingServer.Instance.bullets.GetResource("test-bullet").Fire(transform.Data, testBehavior, 0f);
+        RenderingServer.Instance.bullets.GetResource("test-bullet").Fire(transform.Data, testBehavior, 45f);
+        RenderingServer.Instance.bullets.GetResource("test-bullet").Fire(transform.Data, testBehavior, 90f);
+        RenderingServer.Instance.bullets.GetResource("test-bullet").Fire(transform.Data, testBehavior, 135f);
+        RenderingServer.Instance.bullets.GetResource("test-bullet").Fire(transform.Data, testBehavior, 180f);
+        RenderingServer.Instance.bullets.GetResource("test-bullet").Fire(transform.Data, testBehavior, 225f);
+        RenderingServer.Instance.bullets.GetResource("test-bullet").Fire(transform.Data, testBehavior, 270f);
+        RenderingServer.Instance.bullets.GetResource("test-bullet").Fire(transform.Data, testBehavior, 315f);
     }
 
     protected override void OnUnload()
@@ -68,7 +83,7 @@ public sealed class Window : GameWindow
         base.OnUpdateFrame(e);
 
         // Set delta time
-        Time.SetDeltaTime(this, (float)e.Time);
+        Time.UpdateTime(this, (float)e.Time);
 
         // Update bullets
         GameServer.Instance.UpdateBullets();
@@ -83,6 +98,7 @@ public sealed class Window : GameWindow
         RenderingServer.Instance.Screen.BindFBO();
 
         /* Render game here */
+        RenderingServer.Instance.RenderBullets();
 
         // Render the background
         RenderingServer.Instance.Background.Render();

@@ -4,6 +4,20 @@ using BulletDevil.Rendering;
 
 namespace BulletDevil.Core;
 
+public readonly struct TransformData
+{
+    public readonly Vector2 position;
+    public readonly float rotation;
+    public readonly Vector2 scale;
+
+    public TransformData(Vector2 position, float rotation, Vector2 scale)
+    {
+        this.position = position;
+        this.rotation = rotation;
+        this.scale    = scale;
+    }
+}
+
 public sealed class Transform
 {
     private Transform parent;
@@ -79,6 +93,8 @@ public sealed class Transform
     }
 
     public Vector2 Up => MathUtils.Rotate(Vector2.UnitY, rotation);
+
+    public TransformData Data => new(Position, Rotation, Scale);
 
     #endregion
 

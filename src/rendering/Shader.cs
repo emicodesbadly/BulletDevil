@@ -84,7 +84,12 @@ public sealed class Shader : IDisposable
     {
         Lazy<Shader> lazyShader = new(() => new Shader(name));
 
-        RenderingServer.Instance.shaders.TryAdd(name, lazyShader);
+        if (!RenderingServer.Instance.shaders.TryAdd(name, lazyShader))
+        {
+            Utils.ThrowWarning("BulletDevil.Rendering.Shader", $"Shader \'{name}\' could not be created!");
+
+            return null;
+        }
 
         return lazyShader.Value;
     }

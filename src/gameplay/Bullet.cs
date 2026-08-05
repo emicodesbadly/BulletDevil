@@ -1,7 +1,10 @@
+using System;
+using OpenTK.Mathematics;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using BulletDevil.Rendering;
+using BulletDevil.Utilities;
+using BulletDevil.Core;
 
 namespace BulletDevil.Gameplay;
 
@@ -46,27 +49,77 @@ public class Bullet : Sprite
         GL.BindVertexArray(0);
     }
 
-    public static Bullet Create(string shader, string texture, Vector2 size)
+    public static Bullet Create(string name, string shader, string texture, Vector2 size)
     {
-        return new Bullet(shader, texture, size);
+        Lazy<Bullet> lazyBullet = new Lazy<Bullet>(() => new Bullet(shader, texture, size));
+
+        if (!RenderingServer.Instance.bullets.TryAdd(name, lazyBullet))
+        {
+            Utils.ThrowWarning("ProjectileTK.Gameplay.Bullet", $"Bullet \'{name}\' could not be created!");
+
+            return null;
+        }
+
+        return lazyBullet.Value;
     }
 
-    public BulletInstance Instantiate(Vector2 position, float rotation, Vector2 scale)
+    public void Fire(TransformData transformData, BulletBehavior behavior, float angle)
     {
-        BulletInstance instance = new();
+        BulletInstance instance = new(behavior, angle);
 
-        instance.transform.Position = position;
-        instance.transform.Rotation = rotation;
-        instance.transform.Scale    = scale;
+        instance.transform.Position = transformData.position;
+        instance.transform.Rotation = transformData.rotation;
+        instance.transform.Scale    = transformData.scale;
 
         instances.Add(instance);
-
-        return instance;
     }
 
     public void Update()
     {
-        
+        BulletInstance instance;
+        for (int i = instances.Count - 1; i >= 0; i--)
+        {
+            instance = instances[i];
+
+            if (instance.elapsed >= instance.behavior.lifetime)
+            {
+                instances.Remove(instance);
+
+                continue;
+            }
+
+            switch (instance.behavior.type)
+            {
+                case BulletBehaviorType.UniformLinear:
+                    instance.transform.Position += MathUtils.Rotate(Vector2.UnitY, instance.angle) * instance.behavior.data[0] * Time.DeltaTime;
+
+                    break;
+                case BulletBehaviorType.AcceleratedLinear:
+                    instance.transform.Position +=
+                        MathUtils.Rotate(Vector2.UnitY, instance.angle) *
+                        ((instance.behavior.data[0] + instance.behavior.data[1] * instance.elapsed) * Time.DeltaTime +
+                        0.5f * instance.behavior.data[1] * Time.DeltaTime * Time.DeltaTime);
+
+                    break;
+                case BulletBehaviorType.UniformRadial:
+                    instance.transform.Position += MathUtils.Rotate(Vector2.UnitY, instance.angle) * instance.behavior.data[0] * Time.DeltaTime;
+
+                    instance.angle += instance.behavior.data[1] * Time.DeltaTime;
+
+                    break;
+                case BulletBehaviorType.AcceleratedRadial:
+                    instance.transform.Position +=
+                        MathUtils.Rotate(Vector2.UnitY, instance.angle) *
+                        ((instance.behavior.data[0] + instance.behavior.data[1] * instance.elapsed) * Time.DeltaTime +
+                        0.5f * instance.behavior.data[1] * Time.DeltaTime * Time.DeltaTime);
+
+                    instance.angle += instance.behavior.data[2] * Time.DeltaTime;
+
+                    break;
+            }
+
+            instance.elapsed += Time.DeltaTime;
+        }
     }
 
     public override void Render()

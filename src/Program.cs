@@ -15,7 +15,8 @@ sealed class Program
         NativeWindowSettings nativeWindowSettings = new()
         {
             Title = "title",
-            ClientSize = (640, 360),
+            //ClientSize = (640, 360),
+            ClientSize = (960, 540),
             APIVersion = new(4, 6)
         };
 

@@ -10,6 +10,9 @@ public static class Time
     private static float deltaTime;
     public static float DeltaTime => deltaTime;
 
+    private static float time;
+    public static float TotalTime => time;
+
     public static bool SetTimeSource(object source)
     {
         if (timeSource != null)
@@ -24,16 +27,18 @@ public static class Time
         return true;
     }
 
-    public static bool SetDeltaTime(object sender, float delta)
+    public static bool UpdateTime(object sender, float delta)
     {
         if (sender != timeSource)
         {
-            Utils.ThrowWarning("BulletDevil.Core.Time", "Attempt to set delta time by object other than the Time Source!");
+            Utils.ThrowWarning("BulletDevil.Core.Time", "Attempt to update time by object other than the Time Source!");
 
             return false;
         }
 
         deltaTime = delta;
+
+        time += delta;
 
         return true;
     }
