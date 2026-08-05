@@ -64,6 +64,11 @@ public class Bullet : Sprite
         return instance;
     }
 
+    public void Update()
+    {
+        
+    }
+
     public override void Render()
     {
         // If this sprite has not been instantiated, skip

@@ -1,5 +1,6 @@
 using System;
 using BulletDevil.Core;
+using BulletDevil.Gameplay;
 using BulletDevil.Utilities;
 
 namespace BulletDevil.Rendering;
@@ -19,6 +20,7 @@ public sealed class RenderingServer : IDisposable
     // Graphics resources
     public GraphicsResourceContainer<Shader> shaders;
     public GraphicsResourceContainer<Texture> textures;
+    public GraphicsResourceContainer<Bullet> bullets;
 
     private Screen screen;
     public Screen Screen => screen;
@@ -51,6 +53,10 @@ public sealed class RenderingServer : IDisposable
             // Dispose of background
             background.Dispose();
             background = null;
+
+            // Dispose of bullets
+            bullets.Dispose();
+            bullets = null;
 
             // Dispose of shaders
             shaders.Dispose();

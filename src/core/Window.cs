@@ -20,6 +20,9 @@ public sealed class Window : GameWindow
     {
         base.OnLoad();
 
+        // SET AS TIME SOURCE
+        Time.SetTimeSource(this);
+
         // LOAD SHADERS
         Shader.Create("sprite-default");
         Shader.Create("screen");
@@ -57,6 +60,18 @@ public sealed class Window : GameWindow
         RenderingServer.Instance.Background.OnWindowResized((e.Width, e.Height));
 
         RenderingServer.Instance.Screen.OnWindowResized(RenderingServer.Instance.Background.Resolution);
+    }
+
+    // Called when the frame starts, BEFORE OnRenderFrame()
+    protected override void OnUpdateFrame(FrameEventArgs e)
+    {
+        base.OnUpdateFrame(e);
+
+        // Set delta time
+        Time.SetDeltaTime(this, (float)e.Time);
+
+        // Update bullets
+        GameServer.Instance.UpdateBullets();
     }
 
     // Called when the frame is rendered, AFTER OnUpdateFrame()

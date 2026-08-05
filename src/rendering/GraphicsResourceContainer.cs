@@ -8,6 +8,8 @@ public class GraphicsResourceContainer<T> : IDisposable where T : class, IDispos
 {
     private Dictionary<string, T> resourceDictionary = [];
 
+    public Dictionary<string, T>.ValueCollection Values => resourceDictionary.Values;
+
     public bool ContainsKey(string key) => resourceDictionary.ContainsKey(key);
 
     public bool TryAdd(string key, Lazy<T> value)
